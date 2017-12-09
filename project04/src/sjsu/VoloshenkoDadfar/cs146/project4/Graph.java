@@ -12,9 +12,9 @@ public class Graph {
 	private int numOfVertices;
 	private int numOfEdges;
 	
-	private Collection<Edge> edges = new HashSet<Edge>();
 	private Set<Vertex> vertices = new HashSet<Vertex>();
-	private Map<Vertex, Map<Vertex, Integer>> adjacencies = new HashMap<Vertex, Map<Vertex, Integer>>();
+	private Collection<Edge> edges = new HashSet<Edge>();
+	private Map<Vertex, Map<Vertex, Float>> adjacencies = new HashMap<Vertex, Map<Vertex, Float>>();
 
 	/**
 	 * A class representing a graph, can be built from an edge list
@@ -27,12 +27,13 @@ public class Graph {
 	
 	
 	// New implementation, possibly to be improved
-	public Graph(int e, int v, Collection<Edge> edg, Set<Vertex> vert, Map<Vertex, Map<Vertex, Integer>> adj ) {
+	public Graph(int v, int e, Set<Vertex> vert, Collection<Edge> edg, Map<Vertex, Map<Vertex, Float>> adj ) {
 		
 		numOfVertices = v;
 		numOfEdges = e;
-		edges = edg;
+		
 		vertices = vert;
+		edges = edg;
 		adjacencies = adj;
 	}
 	 
@@ -51,14 +52,14 @@ public class Graph {
 			edges.add(new Edge(u, v, weight));
 			
 			if (!adjacencies.containsKey(u)) {
-				adjacencies.put(u, new HashMap<Vertex, Integer>());
+				adjacencies.put(u, new HashMap<Vertex, Float>());
 			}
-			adjacencies.get(u).put(v, weight);
+			adjacencies.get(u).put(v, (float) weight);
 			
 			if (!adjacencies.containsKey(v)) {
-				adjacencies.put(v, new HashMap<Vertex, Integer>());
+				adjacencies.put(v, new HashMap<Vertex, Float>());
 			}
-			adjacencies.get(v).put(u, weight);
+			adjacencies.get(v).put(u, (float) weight);
 		}
 
 		scan.close();
@@ -83,7 +84,7 @@ public class Graph {
 		return vertices;
 	}
 	
-	public Map<Vertex, Integer> getAdjacencies(Vertex u) {
+	public Map<Vertex, Float> getAdjacencies(Vertex u) {
 		return adjacencies.get(u);
 	}
 }

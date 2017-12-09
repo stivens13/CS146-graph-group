@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class MST {
     	ArrayList<Vertex> visited = new ArrayList();
     	visited.add(startVertex);
     	PriorityQueue<Edge> pq = new PriorityQueue<Edge>();
-    	Map<Vertex, Integer> map = g.getAdjacencies(startVertex);
+    	Map<Vertex, Float> map = g.getAdjacencies(startVertex);
     	Set<Vertex> set = map.keySet();
     	for(Vertex v: set)
     	{
@@ -101,15 +102,16 @@ public class MST {
         int numOfV = 0;
         int numOfE = 0;
 
-        Vertex v1 = null;
-        Vertex v2 = null;
+        Vertex u = null;
+        Vertex v = null;
 
         Edge e;
 
         Collection<Edge> edges = new HashSet<Edge>();
         Set<Vertex> vertices = new HashSet<Vertex>();
+        Map<Vertex, Map<Vertex, Float>> adjacencies = new HashMap<Vertex, Map<Vertex, Float>>();
 
-        Graph g;
+        Graph g = null;
 
 
         File file = new File("tinyEWG.txt");
@@ -136,18 +138,32 @@ public class MST {
                 String line = scan.nextLine();
                 if(line != null && !line.equals("")) {
                     String[] splited = line.split("\\s+");
-                    v1 = new Vertex(Integer.parseInt(splited[0]));
-                    v2 = new Vertex(Integer.parseInt(splited[1]));
+                    u = new Vertex(Integer.parseInt(splited[0]));
+                    v = new Vertex(Integer.parseInt(splited[1]));
                     weight = Float.valueOf(splited[2]);
                 }
 
-                e = new Edge(v1, v2, weight);
+                e = new Edge(u, v, weight);
 
                 edges.add(e);
-                vertices.add(v1);
-                vertices.add(v2);
+                vertices.add(u);
+                vertices.add(v);
+
+                if (!adjacencies.containsKey(u)) {
+                    adjacencies.put(u, new HashMap<Vertex, Float>());
+                }
+                
+                adjacencies.get(u).put(v, (float) weight);
+                
+                if (!adjacencies.containsKey(v)) {
+                    adjacencies.put(v, new HashMap<Vertex, Float>());
+                }
+
+                adjacencies.get(v).put(u, (float) weight);
 
             }
+
+            g = new Graph(numOfV, numOfE, vertices, edges, adjacencies);
 
             scan.close();
             
