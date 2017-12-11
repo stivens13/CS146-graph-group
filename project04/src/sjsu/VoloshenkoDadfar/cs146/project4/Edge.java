@@ -70,4 +70,10 @@ public class Edge implements Comparable<Edge> {
 	public void setV(Vertex v) {
 		this.v = v;
 	}
+
+	public void printEdge() {
+		int a = u.getId();
+		int b = v.getId();
+		System.out.println( a + " - " + b + " has weight: " + weight);
+	}
 }

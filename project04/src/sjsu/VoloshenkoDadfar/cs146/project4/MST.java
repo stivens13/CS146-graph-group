@@ -96,6 +96,13 @@ public class MST {
     		return null;
     	return finalEdges;
     }
+    
+    public static void printMST(Collection<Edge> mst) {
+        Iterator<Edge> iter = mst.iterator();
+        while(iter.hasNext()) {
+            ((Edge) iter).printEdge();
+        }
+    }
 
     public static void main(String [] args) {
 
@@ -112,6 +119,8 @@ public class MST {
         Map<Vertex, Map<Vertex, Float>> adjacencies = new HashMap<Vertex, Map<Vertex, Float>>();
 
         Graph g = null;
+        
+//        MST mst = new MST();
 
 
         File file = new File("tinyEWG.txt");
@@ -171,6 +180,11 @@ public class MST {
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
+        
+        
+        // MST.prims(g, 0);
+        printMST(prims(g,0));
+        
     }
     
 }
