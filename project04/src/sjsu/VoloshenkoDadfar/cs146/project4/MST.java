@@ -103,19 +103,46 @@ public class MST {
             iter.next().printEdge();;
         }
     }
+    
+    public static Collection<Edge> new_algo() {
+    	
+    		return new HashSet<Edge>();
+    }
 
     public static void main(String [] args) {
 
         
         Graph graph = createGraph();
         
+        Collection<Edge> backedges = graph.getBackEdges();
+        
+        for(Edge e: backedges) {
+        		e.printEdge();
+        }
+        
+//        System.out.println(graph.isCyclic() ? "Cyclic" : "Not cyclic");
+        
+//        Map<Vertex, Map<Vertex, Float>> adjacencies = graph.getAdjacenciesList();
+//        Collection<Edge> edges = graph.getEdgeList();
+//        
+//        for(Edge e : edges) {
+//        		Map<Vertex, Float> adjs = adjacencies.get(e);
+//        		Iterator it =  adjs.entrySet().iterator();
+//            while (it.hasNext()) {
+//		        	Map.Entry pair = (Map.Entry) it.next();
+//		    		Vertex i = pair.getKey();
+//            }
+//        }
+        
         // MST.prims(g, 0);
-        printMST(prims(graph,0));
-        System.out.println("");
-        System.out.println("");
-        printMST(kruskals(graph));
+//        printMST(prims(graph,0));
+//        System.out.println("");
+//        System.out.println("");
+//        printMST(kruskals(graph));
         
     }
+    
+    
 
     public static Graph createGraph() {
 
@@ -132,8 +159,7 @@ public class MST {
         Map<Vertex, Map<Vertex, Float>> adjacencies = new HashMap<Vertex, Map<Vertex, Float>>();
 
         Graph g = null;
-        
-//        MST mst = new MST();
+       
 
 
         File file = new File("tinyEWG.txt");

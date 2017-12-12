@@ -5,18 +5,21 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
 public class Graph {
 
-	private int numOfVertices;
-	private int numOfEdges;
+	private int V;
+	private int E;
 	
 	private Set<Vertex> vertices = new HashSet<Vertex>();
 	private Collection<Edge> edges = new HashSet<Edge>();
 	private Map<Vertex, Map<Vertex, Float>> adjacencies = new HashMap<Vertex, Map<Vertex, Float>>();
+	private Collection<Edge> backedges = new LinkedList<Edge>();
 
 	/**
 	 * A class representing a graph, can be built from an edge list
@@ -31,12 +34,13 @@ public class Graph {
 	// New implementation, possibly to be improved
 	public Graph(int v, int e, Set<Vertex> vert, Collection<Edge> edg, Map<Vertex, Map<Vertex, Float>> adj ) {
 		
-		numOfVertices = v;
-		numOfEdges = e;
+		V = v;
+		E = e;
 		
 		vertices = vert;
 		edges = edg;
 		adjacencies = adj;
+		isCyclic();
 	}
 	 
 	
@@ -66,6 +70,60 @@ public class Graph {
 
 		scan.close();
 	}
+	
+	public Boolean isCyclicUtil(int v, Boolean visited[], int parent)
+    {
+        // Mark the current node as visited
+        visited[v] = true;
+        int i;
+ 
+        // Recur for all the vertices adjacent to this vertex
+        Map<Vertex, Float> adjs = getAdjacencies(v);
+        Iterator it =  adjs.entrySet().iterator();
+        while (it.hasNext())
+        {
+        		Map.Entry<Vertex, Float> pair = (Map.Entry<Vertex, Float>) it.next();
+        		i = ( (Vertex) pair.getKey() ).getId();
+        		float weight = pair.getValue();
+//            i = it.next();
+ 
+            // If an adjacent is not visited, then recur for that
+            // adjacent
+            if (!visited[i])
+            {
+                if (isCyclicUtil(i, visited, v))
+                    return true;
+            }
+ 
+            // If an adjacent is visited and not parent of current
+            // vertex, then there is a cycle.
+            else if (i != parent) {
+            		backedges.add( new Edge (new Vertex(i), new Vertex(parent), weight));
+                return true;
+            }
+        }
+         return false;
+    }
+ 
+    // Returns true if the graph contains a cycle, else false.
+    public void isCyclic()
+    {
+        // Mark all the vertices as not visited and not part of
+        // recursion stack
+        int x = 0;
+        Boolean visited[] = new Boolean[V];
+        for (int i = 0; i < V; i++)
+            visited[i] = false;
+ 
+        // Call the recursive helper function to detect cycle in
+        // different DFS trees
+        for (int u = 0; u < V; u++)
+            if (!visited[u]) // Don't recur for u if already visited
+                if (isCyclicUtil(u, visited, -1))
+                    x += 1;
+ 
+        // return false;
+    }
 
 //	public void outputGDF(String fileName)
 //    {
@@ -103,15 +161,19 @@ public class Graph {
 //        }
 //
 //    }
+    
+    public Collection<Edge> getBackEdges() {
+    		return backedges;
+    }
 	
 	public int getNumOfEdges() {
 		
-		return numOfEdges;
+		return E;
 	}
 	
 	public int getNumOfVertices() {
 		
-		return numOfVertices;
+		return V;
 	}
 
 
@@ -123,7 +185,16 @@ public class Graph {
 		return vertices;
 	}
 	
+	public Map<Vertex, Float> getAdjacencies(int u) {
+		Vertex v = new Vertex(u);
+		return adjacencies.get(v);
+	}
+	
 	public Map<Vertex, Float> getAdjacencies(Vertex u) {
 		return adjacencies.get(u);
+	}
+	
+	public Map<Vertex, Map<Vertex, Float>> getAdjacenciesList() {
+		return adjacencies;
 	}
 }

@@ -18,6 +18,11 @@ public class Edge implements Comparable<Edge> {
 		setV(v);
 		setWeight(weight);
 	}
+	
+	public Edge(Vertex u, Vertex v) {
+		setU(u);
+		setV(v);
+	}
 
 	@Override
 	public int hashCode() {
