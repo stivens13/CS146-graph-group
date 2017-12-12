@@ -1,5 +1,7 @@
 package sjsu.VoloshenkoDadfar.cs146.project4;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,6 +66,43 @@ public class Graph {
 
 		scan.close();
 	}
+
+//	public void outputGDF(String fileName)
+//    {
+//        HashMap<Vertex, String> idToName = new HashMap<Vertex, String>();
+//        try {
+//            FileWriter out = new FileWriter(fileName);
+//            int count = 0;
+//            out.write("nodedef> name,label,style,distance INTEGER\n");
+//            // write vertices
+//            for (Vertex v: vertices.values())
+//            {
+//                String id = "v"+ count++;
+//                idToName.put(v, id);
+//                out.write(id + "," + escapedVersion(v.name));
+//                out.write(",6,"+v.distance+"\n");
+//            }
+//            out.write("edgedef> node1,node2,color\n");
+//            // write edges
+//            for (Vertex v : myVertices.values())
+//                for (Vertex w : myAdjList.get(v))
+//                    if (v.compareTo(w) < 0)
+//                    {
+//                        out.write(idToName.get(v)+","+
+//                                idToName.get(w) + ",");
+//                        if (v.predecessor == w ||
+//                                w.predecessor == v)
+//                            out.write("blue");
+//                        else
+//                            out.write("gray");
+//                        out.write("\n");
+//                    }
+//            out.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 	
 	public int getNumOfEdges() {
 		

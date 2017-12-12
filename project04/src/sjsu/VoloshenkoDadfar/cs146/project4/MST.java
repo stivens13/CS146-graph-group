@@ -26,7 +26,7 @@ public class MST {
     public static Collection<Edge> kruskals(Graph g) {
     	if (g==null)
 			return null;
-    	if(g.getEdgeList().size()<(g.getVertices().size()-1)){
+    	if(g.getEdgeList().size()<(g.getVertices().size()-1)) {
     		return null;
     	}
 		ArrayList<Edge> edgeList =  new ArrayList<Edge>(g.getEdgeList());
@@ -59,9 +59,9 @@ public class MST {
 
     	Vertex startVertex = new Vertex(start);
     	Vertex currVertex = startVertex;
-    	Collection<Edge> finalEdges = new ArrayList();
+    	Collection<Edge> finalEdges = new ArrayList<Edge>();
     	Collection<Edge> edgeList = g.getEdgeList();
-    	ArrayList<Vertex> visited = new ArrayList();
+    	ArrayList<Vertex> visited = new ArrayList<Vertex>();
     	visited.add(startVertex);
     	PriorityQueue<Edge> pq = new PriorityQueue<Edge>();
     	Map<Vertex, Float> map = g.getAdjacencies(startVertex);
@@ -100,11 +100,24 @@ public class MST {
     public static void printMST(Collection<Edge> mst) {
         Iterator<Edge> iter = mst.iterator();
         while(iter.hasNext()) {
-            ((Edge) iter).printEdge();
+            iter.next().printEdge();;
         }
     }
 
     public static void main(String [] args) {
+
+        
+        Graph graph = createGraph();
+        
+        // MST.prims(g, 0);
+        printMST(prims(graph,0));
+        System.out.println("");
+        System.out.println("");
+        printMST(kruskals(graph));
+        
+    }
+
+    public static Graph createGraph() {
 
         int numOfV = 0;
         int numOfE = 0;
@@ -180,11 +193,9 @@ public class MST {
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
-        
-        
-        // MST.prims(g, 0);
-        printMST(prims(g,0));
-        
+
+        return g;
+
     }
     
 }
