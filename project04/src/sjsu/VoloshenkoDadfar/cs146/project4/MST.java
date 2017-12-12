@@ -117,9 +117,21 @@ public class MST {
         System.out.println("");
     }
     
-    public static Collection<Edge> new_algo() {
+    public static Graph new_algo(Graph g) 
+    {	
+    	ArrayList<Edge> edgeList = (ArrayList<Edge>) g.getEdgeList();
+    	Collections.reverseOrder((Comparator<Edge>) edgeList);
+
+    	ArrayList<Edge> backEdges = (ArrayList<Edge>) g.getBackEdges();
     	
-    		return new HashSet<Edge>();
+		for(int i=0; i<= edgeList.size()-1; i++)
+		{
+			if (g.isCyclic()||backEdges.contains(edgeList.get(i)))
+			{
+				g.removeEdgeFromAdjecencyList(edgeList.get(i).getU(), edgeList.get(i).getV());
+			}	
+		}
+    	return g;
     }
 
     public static void main(String [] args) {
