@@ -145,7 +145,7 @@ public class MST {
         		float weight = entry.getKey();
         		Vertex u = entry.getValue().getU();
         		Vertex v = entry.getValue().getV();
-        		if( graph.isCyclic(u.getId() ) ) {
+        		if( graph.isCyclic(u.getId() ) && graph.isCyclic(v.getId())) {
         			graph.removeEdgeFromAdjecencyList(v, u);
         			graph.removeEdgeFromSortedEdges(weight);
 //        			sortedEdges.remove(weight);
