@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.Comparator;
 
 public class Graph {
 
@@ -20,6 +22,9 @@ public class Graph {
 	private Collection<Edge> edges = new HashSet<Edge>();
 	private Map<Vertex, Map<Vertex, Float>> adjacencies = new HashMap<Vertex, Map<Vertex, Float>>();
 	private Collection<Edge> backedges = new LinkedList<Edge>();
+	
+	
+	Map<Float, Edge> sortedEdges = new HashMap<Float, Edge>();
 
 	/**
 	 * A class representing a graph, can be built from an edge list
@@ -41,6 +46,20 @@ public class Graph {
 		edges = edg;
 		adjacencies = adj;
 		isCyclic();
+	}
+	
+public Graph(int v, int e, Set<Vertex> vert, Collection<Edge> edg, Map<Vertex, Map<Vertex, Float>> adj, Map<Float, Edge> unst ) {
+		
+		V = v;
+		E = e;
+		
+		vertices = vert;
+		edges = edg;
+		adjacencies = adj;
+//		unsortedEdges = unst;
+		
+		sortedEdges = sortEdges(unst);
+//		isCyclic();
 	}
 	 
 	
@@ -65,6 +84,7 @@ public class Graph {
 			if (!adjacencies.containsKey(v)) {
 				adjacencies.put(v, new HashMap<Vertex, Float>());
 			}
+			
 			adjacencies.get(v).put(u, (float) weight);
 		}
 
@@ -84,7 +104,7 @@ public class Graph {
         {
         		Map.Entry<Vertex, Float> pair = (Map.Entry<Vertex, Float>) it.next();
         		i = ( (Vertex) pair.getKey() ).getId();
-        		float weight = pair.getValue();
+//        		float weight = pair.getValue();
 //            i = it.next();
  
             // If an adjacent is not visited, then recur for that
@@ -98,7 +118,7 @@ public class Graph {
             // If an adjacent is visited and not parent of current
             // vertex, then there is a cycle.
             else if (i != parent) {
-            		backedges.add( new Edge (new Vertex(i), new Vertex(parent), weight));
+//            		backedges.add( new Edge (new Vertex(i), new Vertex(parent), weight));
                 return true;
             }
         }
@@ -106,7 +126,7 @@ public class Graph {
     }
  
     // Returns true if the graph contains a cycle, else false.
-    public void isCyclic()
+    public Boolean isCyclic()
     {
         // Mark all the vertices as not visited and not part of
         // recursion stack
@@ -114,15 +134,37 @@ public class Graph {
         Boolean visited[] = new Boolean[V];
         for (int i = 0; i < V; i++)
             visited[i] = false;
+       
  
         // Call the recursive helper function to detect cycle in
         // different DFS trees
         for (int u = 0; u < V; u++)
             if (!visited[u]) // Don't recur for u if already visited
                 if (isCyclicUtil(u, visited, -1))
-                    x += 1;
+                    return true;
  
-        // return false;
+         return false;
+    }
+    
+    public Boolean isCyclic(int v)
+    {
+        // Mark all the vertices as not visited and not part of
+        // recursion stack
+        int x = 0;
+        Boolean visited[] = new Boolean[V];
+        for (int i = 0; i < V; i++)
+            visited[i] = false;
+        
+        return isCyclicUtil(v, visited, -1);
+ 
+        // Call the recursive helper function to detect cycle in
+        // different DFS trees
+//        for (int u = 0; u < V; u++)
+//            if (!visited[u]) // Don't recur for u if already visited
+//                if (isCyclicUtil(u, visited, -1))
+//                    return true;
+// 
+//         return false;
     }
 
 //	public void outputGDF(String fileName)
@@ -175,6 +217,11 @@ public class Graph {
 		
 		return V;
 	}
+	
+	public void removeEdgeFromAdjecencyList(Vertex v, Vertex u) {
+		adjacencies.get(v).remove(u);
+		adjacencies.get(u).remove(v);
+	}
 
 
 	public Collection<Edge> getEdgeList() {
@@ -196,5 +243,40 @@ public class Graph {
 	
 	public Map<Vertex, Map<Vertex, Float>> getAdjacenciesList() {
 		return adjacencies;
+	}
+	
+	public Map<Float, Edge> getSortedEdges() {
+		return sortedEdges;
+	}
+	
+	public Map<Float, Edge> sortEdges(Map<Float, Edge> unst) {
+		
+		Map<Float, Edge> treeMap = new TreeMap<Float, Edge>(
+                new Comparator<Float>() {
+
+                    @Override
+                    public int compare(Float o1, Float o2) {
+//                    		return o1.getChange() < o2.getChange() ? -1 
+//                    			     : o1.getChange() > o2.getChange() ? 1 
+//                    			    	     : 0;
+                        return o2.compareTo(o1);
+                    }
+
+                });
+		
+		treeMap.putAll(unst);
+		
+		return treeMap;
+	}
+	
+	public void removeEdgeFromSortedEdges(float weight) {
+		Edge e = null;
+		if(sortedEdges.containsKey(weight)) {
+			e = sortedEdges.get(weight);
+//			sortedEdges.remove(weight);
+			if(edges.contains(e))
+				edges.remove(e);
+		}
+		
 	}
 }

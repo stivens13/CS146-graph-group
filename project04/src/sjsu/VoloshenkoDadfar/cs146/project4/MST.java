@@ -96,12 +96,25 @@ public class MST {
     		return null;
     	return finalEdges;
     }
+
+    public static void printMST(Graph g) {
+
+        Collection<Edge> edges = g.getEdgeList();
+        Iterator<Edge> iter = edges.iterator();
+        while(iter.hasNext()) {
+            iter.next().printEdge();
+        }
+        
+        System.out.println("");
+    }
     
     public static void printMST(Collection<Edge> mst) {
         Iterator<Edge> iter = mst.iterator();
         while(iter.hasNext()) {
-            iter.next().printEdge();;
+            iter.next().printEdge();
         }
+        
+        System.out.println("");
     }
     
     public static Collection<Edge> new_algo() {
@@ -119,6 +132,36 @@ public class MST {
         for(Edge e: backedges) {
         		e.printEdge();
         }
+         
+        Map<Float, Edge> sortedEdges = graph.getSortedEdges();
+        
+        Iterator<Map.Entry<Float, Edge>> it = sortedEdges.entrySet().iterator();
+        
+//        for(Map.Entry<Float, Edge> entry: sortedEdges.entrySet()) {
+        while( it.hasNext() ) {
+        	
+        	Map.Entry<Float, Edge> entry = it.next();
+        	
+        		float weight = entry.getKey();
+        		Vertex u = entry.getValue().getU();
+        		Vertex v = entry.getValue().getV();
+        		if( graph.isCyclic(u.getId() ) ) {
+        			graph.removeEdgeFromAdjecencyList(v, u);
+        			graph.removeEdgeFromSortedEdges(weight);
+//        			sortedEdges.remove(weight);
+        			it.remove();
+        			System.out.println(weight);
+        		}
+
+        }
+        
+        printMST(graph);
+        
+//        Iterator it = sortedEdges.keySet().iterator();
+//        
+//        while(it.hasNext()) {
+//        		float weight = it.next().
+//        }
         
 //        System.out.println(graph.isCyclic() ? "Cyclic" : "Not cyclic");
         
@@ -134,11 +177,12 @@ public class MST {
 //            }
 //        }
         
-        // MST.prims(g, 0);
-//        printMST(prims(graph,0));
-//        System.out.println("");
-//        System.out.println("");
-//        printMST(kruskals(graph));
+        Graph g = createGraph();
+        MST.prims(g, 0);
+        printMST(prims(g,0));
+        System.out.println("");
+        System.out.println("");
+        printMST(kruskals(g));
         
     }
     
@@ -157,6 +201,8 @@ public class MST {
         Collection<Edge> edges = new HashSet<Edge>();
         Set<Vertex> vertices = new HashSet<Vertex>();
         Map<Vertex, Map<Vertex, Float>> adjacencies = new HashMap<Vertex, Map<Vertex, Float>>();
+        
+        Map<Float, Edge> unsortedEdges = new HashMap<Float, Edge>();
 
         Graph g = null;
        
@@ -194,6 +240,7 @@ public class MST {
                 e = new Edge(u, v, weight);
 
                 edges.add(e);
+                unsortedEdges.put(weight, e);
                 vertices.add(u);
                 vertices.add(v);
 
@@ -211,7 +258,7 @@ public class MST {
 
             }
 
-            g = new Graph(numOfV, numOfE, vertices, edges, adjacencies);
+            g = new Graph(numOfV, numOfE, vertices, edges, adjacencies, unsortedEdges);
 
             scan.close();
             
