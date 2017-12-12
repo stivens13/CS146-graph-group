@@ -191,10 +191,16 @@ public class MST {
         
         Graph g = createGraph();
         MST.prims(g, 0);
+	System.out.println("Prim's");
+        System.out.println("");
         printMST(prims(g,0));
         System.out.println("");
         System.out.println("");
         printMST(kruskals(g));
+        MST.new_algo(g);
+	System.out.println("New Algorithm");
+        System.out.println("");
+        printMST(new_algo(g));
         
     }
     
