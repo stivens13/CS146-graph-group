@@ -119,16 +119,16 @@ public class MST {
     
     public static Graph new_algo(Graph g) 
     {	
-    	ArrayList<Edge> edgeList = (ArrayList<Edge>) g.getEdgeList();
-    	Collections.reverseOrder((Comparator<Edge>) edgeList);
+    	ArrayList<Edge> edgeList =  new ArrayList<Edge>(g.getEdgeList());
 
-    	ArrayList<Edge> backEdges = (ArrayList<Edge>) g.getBackEdges();
+    	ArrayList<Edge> backEdges = new ArrayList<Edge>(g.getBackEdges());
     	
 		for(int i=0; i<= edgeList.size()-1; i++)
 		{
-			if (g.isCyclic()||backEdges.contains(edgeList.get(i)))
+			Edge e = edgeList.get(i);
+			if (g.isCyclic()||backEdges.contains(e))
 			{
-				g.removeEdgeFromAdjecencyList(edgeList.get(i).getU(), edgeList.get(i).getV());
+				g.removeEdgeFromAdjecencyList(e.getU(), e.getV());
 			}	
 		}
     	return g;
