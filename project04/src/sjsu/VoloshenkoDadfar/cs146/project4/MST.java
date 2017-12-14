@@ -116,91 +116,22 @@ public class MST {
         
         System.out.println("");
     }
-    
-    public static Graph new_algo(Graph g) 
-    {	
-    	ArrayList<Edge> edgeList =  new ArrayList<Edge>(g.getEdgeList());
-
-    	ArrayList<Edge> backEdges = new ArrayList<Edge>(g.getBackEdges());
-    	
-		for(int i=0; i<= edgeList.size()-1; i++)
-		{
-			Edge e = edgeList.get(i);
-			if (g.isCyclic()||backEdges.contains(e))
-			{
-				g.removeEdgeFromAdjecencyList(e.getU(), e.getV());
-			}	
-		}
-    	return g;
-    }
 
     public static void main(String [] args) {
-
-        
-        Graph graph = createGraph();
-        
-        Collection<Edge> backedges = graph.getBackEdges();
-        
-        for(Edge e: backedges) {
-        		e.printEdge();
-        }
-         
-        Map<Float, Edge> sortedEdges = graph.getSortedEdges();
-        
-        Iterator<Map.Entry<Float, Edge>> it = sortedEdges.entrySet().iterator();
-        
-//        for(Map.Entry<Float, Edge> entry: sortedEdges.entrySet()) {
-        while( it.hasNext() ) {
-        	
-        	Map.Entry<Float, Edge> entry = it.next();
-        	
-        		float weight = entry.getKey();
-        		Vertex u = entry.getValue().getU();
-        		Vertex v = entry.getValue().getV();
-        		if( graph.isCyclic(u.getId() ) && graph.isCyclic(v.getId())) {
-        			graph.removeEdgeFromAdjecencyList(v, u);
-        			graph.removeEdgeFromSortedEdges(weight);
-//        			sortedEdges.remove(weight);
-        			it.remove();
-        			System.out.println(weight);
-        		}
-
-        }
-        
-        printMST(graph);
-        
-//        Iterator it = sortedEdges.keySet().iterator();
-//        
-//        while(it.hasNext()) {
-//        		float weight = it.next().
-//        }
-        
-//        System.out.println(graph.isCyclic() ? "Cyclic" : "Not cyclic");
-        
-//        Map<Vertex, Map<Vertex, Float>> adjacencies = graph.getAdjacenciesList();
-//        Collection<Edge> edges = graph.getEdgeList();
-//        
-//        for(Edge e : edges) {
-//        		Map<Vertex, Float> adjs = adjacencies.get(e);
-//        		Iterator it =  adjs.entrySet().iterator();
-//            while (it.hasNext()) {
-//		        	Map.Entry pair = (Map.Entry) it.next();
-//		    		Vertex i = pair.getKey();
-//            }
-//        }
         
         Graph g = createGraph();
         MST.prims(g, 0);
-	System.out.println("Prim's");
+        System.out.println("Prim's");
         System.out.println("");
         printMST(prims(g,0));
         System.out.println("");
-        System.out.println("");
-        printMST(kruskals(g));
-        MST.new_algo(g);
-	System.out.println("New Algorithm");
-        System.out.println("");
-        printMST(new_algo(g));
+        
+        new_algorithm();
+
+//        MST.new_algo(g);
+//        System.out.println("New Algorithm");
+//        System.out.println("");
+//        printMST(new_algo(g));
         
     }
     
@@ -287,6 +218,43 @@ public class MST {
 
         return g;
 
+    }
+    
+    public static void new_algorithm() {
+    	
+    		System.out.println("New algorithm");
+    	
+    		Graph graph = createGraph();
+        
+        Collection<Edge> backedges = graph.getBackEdges();
+        
+        for(Edge e: backedges) {
+        		e.printEdge();
+        }
+         
+        Map<Float, Edge> sortedEdges = graph.getSortedEdges();
+        
+        Iterator<Map.Entry<Float, Edge>> it = sortedEdges.entrySet().iterator();
+        
+//        for(Map.Entry<Float, Edge> entry: sortedEdges.entrySet()) {
+        while( it.hasNext() ) {
+        	
+        	Map.Entry<Float, Edge> entry = it.next();
+        	
+        		float weight = entry.getKey();
+        		Vertex u = entry.getValue().getU();
+        		Vertex v = entry.getValue().getV();
+        		if( graph.isCyclic(u.getId() ) && graph.isCyclic(v.getId()) && graph.getAdjacencies(u).size() > 1 && graph.getAdjacencies(v).size() > 1 ) {
+        			graph.removeEdgeFromAdjecencyList(v, u);
+        			graph.removeEdgeFromSortedEdges(weight);
+//        			sortedEdges.remove(weight);
+        			it.remove();
+//        			System.out.println(weight);
+        		}
+
+        }
+        
+        printMST(graph);
     }
     
 }
