@@ -16,36 +16,6 @@ import java.util.Set;
 public class MST {
 
     /**
-     * Using Disjoint set(s), run Kruskal's algorithm on the given graph and return the MST, return
-     * null if no MST exists for the graph
-     * 
-     * @param g
-     *            The graph, g will never be null
-     * @return the MST of the graph, null if no valid MST exists
-     */
-    public static Collection<Edge> kruskals(Graph g) {
-    	if (g==null)
-			return null;
-    	if(g.getEdgeList().size()<(g.getVertices().size()-1)) {
-    		return null;
-    	}
-		ArrayList<Edge> edgeList =  new ArrayList<Edge>(g.getEdgeList());
-		ArrayList<Edge> finalEdges = new ArrayList<Edge>();
-		DisjointSets<Vertex> disjointSet = new DisjointSets<Vertex>(g.getVertices());
-		Collections.sort(edgeList);
-		for(Edge min: edgeList){
-			Vertex a = min.getU();
-			Vertex b = min.getV();
-			if (!disjointSet.sameSet(a, b)) {
-				disjointSet.merge(a, b);
-				finalEdges.add(min);
-			}
-		}
-		return finalEdges;
-
-    }
-
-    /**
      * Run Prim's algorithm on the given graph and return the minimum spanning tree
      * If no MST exists, return null
      * 
@@ -55,7 +25,7 @@ public class MST {
      * 				The ID of the start node.  Will always exist in the graph
      * @return the MST of the graph, null if no valid MST exists
      */
-    public static Collection<Edge> prims(Graph g, int start){
+     public static Collection<Edge> prims(Graph g, int start){
 
     	Vertex startVertex = new Vertex(start);
     	Vertex currVertex = startVertex;
@@ -106,33 +76,49 @@ public class MST {
         }
         
         System.out.println("");
+        
+        System.out.println("The weight of the MST is: " + g.getGraphWeight());
     }
     
     public static void printMST(Collection<Edge> mst) {
+    		
+    		float weights = 0.0f;
+    		int numOfEdges = 0;
+    		
         Iterator<Edge> iter = mst.iterator();
         while(iter.hasNext()) {
             iter.next().printEdge();
+            numOfEdges++;
         }
         
         System.out.println("");
+        
+        
+		
+		for(Edge e: mst) {
+			weights += e.getWeight();
+		}
+        
+		System.out.println("The weight of the MST is: " + weights);
+		
+		System.out.println("Number of edges: " + numOfEdges);
     }
 
     public static void main(String [] args) {
         
         Graph g = createGraph();
-        MST.prims(g, 0);
+//        MST.prims(g, 0);
         System.out.println("Prim's");
         System.out.println("");
         printMST(prims(g,0));
+//        printMST(g.getEdgeList());
         System.out.println("");
         
-        new_algorithm();
-
-//        MST.new_algo(g);
-//        System.out.println("New Algorithm");
-//        System.out.println("");
-//        printMST(new_algo(g));
+        Graph graph = new_algorithm(createGraph());
         
+//        graph = new_algorithm(graph);
+        
+        printMST(graph.getEdgeList());
     }
     
     
@@ -220,31 +206,33 @@ public class MST {
 
     }
     
-    public static void new_algorithm() {
+    public static Graph new_algorithm(Graph graph) {
     	
     		System.out.println("New algorithm");
     	
-    		Graph graph = createGraph();
+//    		Graph graph = createGraph();
         
-        Collection<Edge> backedges = graph.getBackEdges();
-        
-        for(Edge e: backedges) {
-        		e.printEdge();
-        }
-         
+//        Collection<Edge> backedges = graph.getBackEdges();
         Map<Float, Edge> sortedEdges = graph.getSortedEdges();
         
+//        for(Edge e: backedges) {
+//        		e.printEdge();
+//        		
+//        }
+        
         Iterator<Map.Entry<Float, Edge>> it = sortedEdges.entrySet().iterator();
+        
         
 //        for(Map.Entry<Float, Edge> entry: sortedEdges.entrySet()) {
         while( it.hasNext() ) {
         	
-        	Map.Entry<Float, Edge> entry = it.next();
+        		Map.Entry<Float, Edge> entry = it.next();
         	
         		float weight = entry.getKey();
         		Vertex u = entry.getValue().getU();
         		Vertex v = entry.getValue().getV();
-        		if( graph.isCyclic(u.getId() ) && graph.isCyclic(v.getId()) && graph.getAdjacencies(u).size() > 1 && graph.getAdjacencies(v).size() > 1 ) {
+        		if( ( graph.isCyclic(v) ) && graph.isCyclic(u) ) {
+//        		if(graph.isCyclic(u.getId()) && graph.isCyclic(v.getId() ) )  {
         			graph.removeEdgeFromAdjecencyList(v, u);
         			graph.removeEdgeFromSortedEdges(weight);
 //        			sortedEdges.remove(weight);
@@ -254,8 +242,62 @@ public class MST {
 
         }
         
-        printMST(graph);
+        return graph;
     }
+    
+    public static Graph new_algorithm_modified(Graph graph) {
+    	
+		System.out.println("New algorithm");
+	
+//		Graph graph = createGraph();
+    
+//    Collection<Edge> backedges = graph.getBackEdges();
+    Map<Float, Edge> sortedEdges = graph.getSortedEdges();
+    
+//    for(Edge e: backedges) {
+//    		e.printEdge();
+//    		
+//    }
+    
+    Map<Vertex, Map<Vertex, Float>> adjacencies = graph.getAdjacenciesList();
+    Collection<Edge> edges = graph.getEdgeList();
+    
+    Iterator<Map.Entry<Float, Edge>> it = sortedEdges.entrySet().iterator();
+    
+//    for(Map.Entry<Float, Edge> entry: sortedEdges.entrySet()) {
+    while( it.hasNext() ) {
+    	
+    		Map.Entry<Float, Edge> entry = it.next();
+    	
+    		float weight = entry.getKey();
+    		Vertex u = entry.getValue().getU();
+    		Vertex v = entry.getValue().getV();
+    		
+    		
+//    		if( ( graph.isCyclic(v.getId()) ) && graph.isCyclic(u.getId() ) ) {
+//    		if( adjacencies.get(v).size() > 1 && adjacencies.get(u).size() > 1 ) {
+//    		if(graph.isCyclic(u.getId()) && graph.isCyclic(v.getId() ) )  {
+		adjacencies.get(v).remove(u);
+		adjacencies.get(u).remove(v);
+		
+		if(adjacencies.get(v).isEmpty() || adjacencies.get(u).isEmpty()) {
+			adjacencies.get(v).put(u, (float) weight);
+			adjacencies.get(u).put(v, (float) weight);
+		}
+		
+		else {
+			edges.remove(new Edge(u, v, weight));
+			it.remove();
+		}
+   
+    		
+    		graph.setAdjacenciesList(adjacencies);
+    		graph.setEdgesList(edges);
+
+    }
+    
+    return graph;
+}
     
 }
     	

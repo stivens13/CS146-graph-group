@@ -45,7 +45,6 @@ public class Graph {
 		vertices = vert;
 		edges = edg;
 		adjacencies = adj;
-		isCyclic();
 	}
 	
 public Graph(int v, int e, Set<Vertex> vert, Collection<Edge> edg, Map<Vertex, Map<Vertex, Float>> adj, Map<Float, Edge> unst ) {
@@ -91,25 +90,27 @@ public Graph(int v, int e, Set<Vertex> vert, Collection<Edge> edg, Map<Vertex, M
 		scan.close();
 	}
 	
-	public Boolean isCyclicUtil(int v, Boolean visited[], int parent)
+	public Boolean isCyclicUtil(Vertex v, Map<Vertex, Boolean> visited, Vertex parent)
     {
         // Mark the current node as visited
-        visited[v] = true;
-        int i;
+        visited.put(v, true);
+        
+        Vertex i;
  
         // Recur for all the vertices adjacent to this vertex
         Map<Vertex, Float> adjs = getAdjacencies(v);
         Iterator it =  adjs.entrySet().iterator();
+        
         while (it.hasNext())
         {
         		Map.Entry<Vertex, Float> pair = (Map.Entry<Vertex, Float>) it.next();
-        		i = ( (Vertex) pair.getKey() ).getId();
+        		i = (Vertex) pair.getKey();
 //        		float weight = pair.getValue();
 //            i = it.next();
  
             // If an adjacent is not visited, then recur for that
             // adjacent
-            if (!visited[i])
+            if (!visited.get(i))
             {
                 if (isCyclicUtil(i, visited, v))
                     return true;
@@ -119,47 +120,62 @@ public Graph(int v, int e, Set<Vertex> vert, Collection<Edge> edg, Map<Vertex, M
             // vertex, then there is a cycle.
             else if (i != parent) {
 //            		backedges.add( new Edge (new Vertex(i), new Vertex(parent), weight));
+//            		System.out.println("Cyclic: " + i );
                 return true;
             }
         }
          return false;
     }
+	
+	public Boolean isDisjoint(Vertex v) {
+		
+		if(adjacencies.get(v).isEmpty())
+			return true;
+		else return false;
+	}
  
     // Returns true if the graph contains a cycle, else false.
-    public Boolean isCyclic()
-    {
-        // Mark all the vertices as not visited and not part of
-        // recursion stack
-        int x = 0;
-        Boolean visited[] = new Boolean[V];
-        for (int i = 0; i < V; i++)
-            visited[i] = false;
-       
- 
-        // Call the recursive helper function to detect cycle in
-        // different DFS trees
-        for (int u = 0; u < V; u++)
-            if (!visited[u]) // Don't recur for u if already visited
-                if (isCyclicUtil(u, visited, -1))
-                    return true;
- 
-         return false;
-    }
-    
-    public Boolean isCyclic(int v)
-    {
-        // Mark all the vertices as not visited and not part of
-        // recursion stack
-        int x = 0;
-        Boolean visited[] = new Boolean[V];
-        for (int i = 0; i < V; i++)
-            visited[i] = false;
-        
-        return isCyclicUtil(v, visited, -1);
- 
-        // Call the recursive helper function to detect cycle in
-        // different DFS trees
+//    public Boolean isCyclic()
+//    {
+//        // Mark all the vertices as not visited and not part of
+//        // recursion stack
+////        int x = 0;
+//        Boolean visited[] = new Boolean[V];
+//        for (int i = 0; i < V; i++)
+//            visited[i] = false;
+//       
+// 
+//        // Call the recursive helper function to detect cycle in
+//        // different DFS trees
 //        for (int u = 0; u < V; u++)
+//            if (!visited[u]) // Don't recur for u if already visited
+//                if (isCyclicUtil(u, visited, -1))
+//                    return true;
+// 
+//         return false;
+//    }
+    
+    public Boolean isCyclic(Vertex v)
+    {
+        // Mark all the vertices as not visited and not part of
+        // recursion stack
+//        int x = 0;
+    	
+    		Map<Vertex, Boolean> visited = new HashMap<>();
+    		for(Vertex u: vertices) {
+    			visited.put(u, false);
+    		}
+    		
+//    		for(Vertex u: adjacencies.get(v).keySet()) {
+//    			if(!visited.get(u)) {
+		if( isCyclicUtil(v, visited, null) )
+			return true;
+//    			}
+//    		}
+    		
+    		return false;
+    		
+//        for (Vertex u: vertices)
 //            if (!visited[u]) // Don't recur for u if already visited
 //                if (isCyclicUtil(u, visited, -1))
 //                    return true;
@@ -273,10 +289,28 @@ public Graph(int v, int e, Set<Vertex> vert, Collection<Edge> edg, Map<Vertex, M
 		Edge e = null;
 		if(sortedEdges.containsKey(weight)) {
 			e = sortedEdges.get(weight);
-//			sortedEdges.remove(weight);
 			if(edges.contains(e))
 				edges.remove(e);
 		}
 		
+	}
+	
+	public void setAdjacenciesList(Map<Vertex, Map<Vertex, Float>> adj) {
+		adjacencies = adj;
+	}
+	
+	public void setEdgesList(Collection<Edge> edg) {
+		edges = edg;
+	}
+	
+	public float getGraphWeight() {
+		
+		float sum = 0.0f;
+		
+		for(Edge e: edges) {
+			sum += e.getWeight();
+		}
+		
+		return sum;
 	}
 }
