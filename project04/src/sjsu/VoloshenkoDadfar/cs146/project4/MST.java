@@ -13,17 +13,16 @@ import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.Set;
 
-public class MST {
+public class MST 
+{
 
     /**
      * Run Prim's algorithm on the given graph and return the minimum spanning tree
      * If no MST exists, return null
      * 
-     * @param g 
-     * 				The graph to be processed.  Will never be null
-     * @param start 
-     * 				The ID of the start node.  Will always exist in the graph
-     * @return the MST of the graph, null if no valid MST exists
+     * @param g			The graph to be processed.  Will never be null
+     * @param start 		The ID of the start node.  Will always exist in the graph
+     * @return 			the MST of the graph, null if no valid MST exists
      */
      public static Collection<Edge> prims(Graph g, int start){
 
@@ -67,11 +66,16 @@ public class MST {
     	return finalEdges;
     }
 
-    public static void printMST(Graph g) {
-
+	/*
+	*	method to print out the mininum spoanning tree from a graph
+	*	param g		graph that featuresd the minimum spannign tree
+	*/
+    public static void printMST(Graph g) 
+    {
         Collection<Edge> edges = g.getEdgeList();
         Iterator<Edge> iter = edges.iterator();
-        while(iter.hasNext()) {
+        while(iter.hasNext()) 
+	{
             iter.next().printEdge();
         }
         
@@ -80,50 +84,59 @@ public class MST {
         System.out.println("The weight of the MST is: " + g.getGraphWeight());
     }
     
-    public static void printMST(Collection<Edge> mst) {
-    		
-    		float weights = 0.0f;
-    		int numOfEdges = 0;
+	/*
+		method to print out the mininum spoanning tree from a collection of edges
+	*	param mst	/collection of edges left after the algorithms
+	*/
+    public static void printMST(Collection<Edge> mst) 
+    {	
+    	float weights = 0.0f;
+    	int numOfEdges = 0;
     		
         Iterator<Edge> iter = mst.iterator();
-        while(iter.hasNext()) {
+        while(iter.hasNext()) 
+	{
             iter.next().printEdge();
             numOfEdges++;
         }
         
         System.out.println("");
         
+	    for(Edge e: mst) 
+	    {
+		weights += e.getWeight();
+	    }
         
-		
-		for(Edge e: mst) {
-			weights += e.getWeight();
-		}
-        
-		System.out.println("The weight of the MST is: " + weights);
-		
-		System.out.println("Number of edges: " + numOfEdges);
-    }
+	System.out.println("The weight of the MST is: " + weights);		
+	System.out.println("Number of edges: " + numOfEdges);
+    }	
 
-    public static void main(String [] args) {
-        
+	/**
+	*	driver method - creating graphs and running them with different algorithms
+	*	returns the MST of the given graph
+	**/
+    public static void main(String [] args) 
+    {
         Graph g = createGraph();
-//        MST.prims(g, 0);
         System.out.println("Prim's");
         System.out.println("");
         printMST(prims(g,0));
-//        printMST(g.getEdgeList());
         System.out.println("");
         
         Graph graph = new_algorithm(createGraph());
         
-//        graph = new_algorithm(graph);
+        graph = new_algorithm(graph);
         
         printMST(graph.getEdgeList());
     }
     
     
-
-    public static Graph createGraph() {
+	/*
+	*	Creates a new empty graph which is populated with the given text file
+	*	return g	fillled out graph
+	*/
+    public static Graph createGraph() 
+    {
 
         int numOfV = 0;
         int numOfE = 0;
@@ -140,12 +153,8 @@ public class MST {
         Map<Float, Edge> unsortedEdges = new HashMap<Float, Edge>();
 
         Graph g = null;
-       
-
 
         File file = new File("tinyEWG.txt");
-        
-        
         
         try {
             Scanner scan = new Scanner(file);
@@ -198,32 +207,28 @@ public class MST {
             scan.close();
             
             
-        } catch (FileNotFoundException ex) {
+        } 
+	 catch (FileNotFoundException ex) 
+	 {
             ex.printStackTrace();
-        }
+       	 }
 
         return g;
 
     }
     
-    public static Graph new_algorithm(Graph graph) {
+	/*
+	*	reverse search delete algorithm - abandoned version - not used anymore
+	*	return g	graph with the heaviest edges removed (given the graph stays acyclic)
+	*/
+    public static Graph new_algorithm(Graph graph) 
+    {
+	System.out.println("New algorithm");
     	
-    		System.out.println("New algorithm");
-    	
-//    		Graph graph = createGraph();
-        
-//        Collection<Edge> backedges = graph.getBackEdges();
         Map<Float, Edge> sortedEdges = graph.getSortedEdges();
-        
-//        for(Edge e: backedges) {
-//        		e.printEdge();
-//        		
-//        }
-        
+
         Iterator<Map.Entry<Float, Edge>> it = sortedEdges.entrySet().iterator();
         
-        
-//        for(Map.Entry<Float, Edge> entry: sortedEdges.entrySet()) {
         while( it.hasNext() ) {
         	
         		Map.Entry<Float, Edge> entry = it.next();
@@ -232,12 +237,9 @@ public class MST {
         		Vertex u = entry.getValue().getU();
         		Vertex v = entry.getValue().getV();
         		if( ( graph.isCyclic(v) ) && graph.isCyclic(u) ) {
-//        		if(graph.isCyclic(u.getId()) && graph.isCyclic(v.getId() ) )  {
         			graph.removeEdgeFromAdjecencyList(v, u);
         			graph.removeEdgeFromSortedEdges(weight);
-//        			sortedEdges.remove(weight);
         			it.remove();
-//        			System.out.println(weight);
         		}
 
         }
@@ -245,26 +247,21 @@ public class MST {
         return graph;
     }
     
+	/*
+	*	modified reverse search delete algorithm, works with a while loop 
+	*	return g	graph with the heaviest edges removed (given the graph stays acyclic)
+	*/
     public static Graph new_algorithm_modified(Graph graph) {
     	
 		System.out.println("New algorithm");
 	
-//		Graph graph = createGraph();
-    
-//    Collection<Edge> backedges = graph.getBackEdges();
     Map<Float, Edge> sortedEdges = graph.getSortedEdges();
-    
-//    for(Edge e: backedges) {
-//    		e.printEdge();
-//    		
-//    }
-    
+     
     Map<Vertex, Map<Vertex, Float>> adjacencies = graph.getAdjacenciesList();
     Collection<Edge> edges = graph.getEdgeList();
     
     Iterator<Map.Entry<Float, Edge>> it = sortedEdges.entrySet().iterator();
     
-//    for(Map.Entry<Float, Edge> entry: sortedEdges.entrySet()) {
     while( it.hasNext() ) {
     	
     		Map.Entry<Float, Edge> entry = it.next();
@@ -272,12 +269,8 @@ public class MST {
     		float weight = entry.getKey();
     		Vertex u = entry.getValue().getU();
     		Vertex v = entry.getValue().getV();
-    		
-    		
-//    		if( ( graph.isCyclic(v.getId()) ) && graph.isCyclic(u.getId() ) ) {
-//    		if( adjacencies.get(v).size() > 1 && adjacencies.get(u).size() > 1 ) {
-//    		if(graph.isCyclic(u.getId()) && graph.isCyclic(v.getId() ) )  {
-		adjacencies.get(v).remove(u);
+
+	    	adjacencies.get(v).remove(u);
 		adjacencies.get(u).remove(v);
 		
 		if(adjacencies.get(v).isEmpty() || adjacencies.get(u).isEmpty()) {
